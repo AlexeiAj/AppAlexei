@@ -1,39 +1,69 @@
 import React, {Component} from 'react';
+import AsyncStorage from '@react-native-community/async-storage';
 import {
     StyleSheet,
     FlatList,
-    Alert,
+    View,
+    ScrollView,
+    Button,
 } from 'react-native';
 
 import Post from '../components/Post';
 
 export default class Feed extends Component {
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             posts: [],
+            usuario: '',
             url: 'http://alexeiaj.duckdns.org:8800'
         }
     }
 
-    // componentDidMount() {
-    //     fetch(this.state.url + '/posts')
-    //         .then(resposta => resposta.json())
-    //         .then(json => this.setState({ posts: json }))
-    //         .catch(error => Alert.alert(error));
-    // }
+    componentDidMount() {
+        const uri = this.state.url + '/posts';
+
+        AsyncStorage.getItem('token')
+            .then(token => {
+                return {
+                    headers: new Headers({
+                        'Authorization': token
+                    })
+                }
+            })
+            .then(requestInfo => fetch(uri, requestInfo))
+            .then(response => response.json())
+            .then(json => this.setState({ posts: json }));
+
+        AsyncStorage.getItem('usuario')
+            .then(usuario => this.setState({usuario: usuario}));
+    }
+
+    removerToken() {
+        AsyncStorage.clear();
+        this.props.navigation.navigate('Login');
+    }
 
     render() {
         return (
-            <FlatList 
-                style={styles.container} 
-                data={this.state.posts} 
-                keyExtractor={item => String(item.id)} 
-                renderItem={ ({item}) => 
-                    <Post post={item} url={this.state.url}/>
-                }
-            />
+            <View>
+                <ScrollView>
+                    <View>
+                        <FlatList 
+                            style={styles.container} 
+                            data={this.state.posts} 
+                            keyExtractor={item => String(item.id)} 
+                            renderItem={ ({item}) => 
+                                <Post post={item} url={this.state.url}/>
+                            }
+                        />
+                    </View>
+                    <View>
+                        <Button title={`Deslogar de ${this.state.usuario}`} onPress={this.removerToken.bind(this)}/>
+                    </View>
+                </ScrollView>
+            </View>
         );
     }
 }

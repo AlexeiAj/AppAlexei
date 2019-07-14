@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import AsyncStorage from '@react-native-community/async-storage';
 import {
     StyleSheet,
     View,
@@ -8,7 +9,6 @@ import {
     Text,
 } from 'react-native';
 
-import AsyncStorage from '@react-native-community/async-storage';
 
 const width = Dimensions.get('screen').width;
 
