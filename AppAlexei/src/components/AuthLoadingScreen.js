@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-
 import {
     View,
     ActivityIndicator,
+    StyleSheet,
 } from 'react-native';
 
 export default class AuthLoadingScreen extends Component {
@@ -20,9 +20,17 @@ export default class AuthLoadingScreen extends Component {
 
     render() {
         return (
-            <View>
-                <ActivityIndicator />
+            <View style={styles.container}>
+                <ActivityIndicator size = "large" color="#24f200"/>
             </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#6f00c9',
+    }
+});

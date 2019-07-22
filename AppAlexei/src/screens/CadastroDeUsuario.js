@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
 import {
     StyleSheet,
     View,
@@ -12,7 +11,7 @@ import {
 
 const width = Dimensions.get('screen').width;
 
-export default class Login extends Component {
+export default class CadastroDeUsuario extends Component {
 
     constructor() {
         super();
@@ -24,8 +23,8 @@ export default class Login extends Component {
         }
     }
 
-    logar() {
-        const uri = "http://alexeiaj.duckdns.org:8800/auth";
+    salvar() {
+        const uri = "http://alexeiaj.duckdns.org:8800/usuarios";
         
         const requestInfo = {
             method: 'POST',
@@ -40,24 +39,13 @@ export default class Login extends Component {
 
         fetch(uri, requestInfo)
             .then(response => {
-                if(response.ok) return response.text();
-                throw new Error("Não foi possível efetuar login.");
-            })
-            .then(json => {
-                let tokenObj = JSON.parse(json);
-                return `${tokenObj.tipo} ${tokenObj.token}`;
-            })
-            .then(token => {
-                AsyncStorage.setItem('token', token);
-                AsyncStorage.setItem('usuario', this.state.usuario);
-
-                this.props.navigation.push('Feed');
+                if(response.ok){
+                    this.props.navigation.pop();
+                    return;
+                } 
+                throw new Error("Não foi possível cadastrar o usuario.");
             })
             .catch(e => this.setState({mensagem: e.message}));
-    }
-
-    cadastrar() {
-        this.props.navigation.push('Usuarios');
     }
 
     render() {
@@ -66,8 +54,7 @@ export default class Login extends Component {
                 <View style={styles.form}>
                     <TextInput style={styles.input} placeholder="Usuário.." autoCapitalize="none" onChangeText={texto => this.setState({usuario: texto})}/>
                     <TextInput style={styles.input} placeholder="Senha.." autoCapitalize="none" secureTextEntry={true} onChangeText={texto => this.setState({senha: texto})}/>
-                    <Button title="Login" onPress={this.logar.bind(this)}/>
-                    <Button title="Cadastrar" onPress={this.cadastrar.bind(this)}/>
+                    <Button title="Salvar" onPress={this.salvar.bind(this)}/>
                 </View>
 
                 <Text style={styles.mensagem}>{this.state.mensagem}</Text>

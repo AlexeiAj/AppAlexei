@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {
     StyleSheet,
     FlatList,
-    View,
     ScrollView,
     Button,
 } from 'react-native';
@@ -47,25 +46,20 @@ export default class Feed extends Component {
 
     render() {
         return (
-            <View>
-                <ScrollView>
-                    <View>
-                        <FlatList 
-                            style={styles.container} 
-                            data={this.state.posts} 
-                            keyExtractor={item => String(item.id)} 
-                            renderItem={ ({item}) => 
-                                <Post post={item} url={this.state.url}/>
-                            }
-                        />
-                    </View>
-                    <View>
-                        <Button title={`Deslogar de ${this.state.usuario}`} onPress={this.removerToken.bind(this)}/>
-                    </View>
-                </ScrollView>
-            </View>
+            <ScrollView>
+                <FlatList 
+                    style={styles.container} 
+                    data={this.state.posts} 
+                    keyExtractor={item => String(item.id)} 
+                    renderItem={ ({item}) => 
+                        <Post post={item} url={this.state.url}/>
+                    }
+                />
+                <Button title={`Deslogar de ${this.state.usuario}`} onPress={this.removerToken.bind(this)}/>
+            </ScrollView>
         );
     }
+    
 }
 
 const styles = StyleSheet.create({
