@@ -4,9 +4,9 @@ import {
     FlatList,
     ScrollView,
     Button,
+    TouchableOpacity,
+    Text,
 } from 'react-native';
-
-import Usuario from '../components/Usuario';
 
 export default class Usuarios extends Component {
 
@@ -23,10 +23,6 @@ export default class Usuarios extends Component {
 
     load() {
         let url = 'http://alexeiaj.duckdns.org:8800/usuarios';
-        
-        if(this.props.navigation.getParam('idUsuario')){
-            url = `${url}/${this.props.navigation.getParam('idUsuario')}`;
-        }
 
         fetch(url)
         .then(response => response.json())
@@ -35,16 +31,40 @@ export default class Usuarios extends Component {
         });
     }
 
-    cadastrarUsuario() {
-        this.props.navigation.push('CadastroDeUsuario');
-    }
-
-    perfilUsuario(idUsuario) {
-        this.props.navigation.push('PerfilUsuario', {
+    usuarioConsulta(idUsuario) {
+        this.props.navigation.push('UsuarioConsulta', {
             idUsuario: idUsuario
         });
     }
 
+    usuarioInclusao() {
+        this.props.navigation.push('UsuarioInclusao');
+    }
+
+    usuarioAlteracao(idUsuario) {
+        this.props.navigation.push('UsuarioAlteracao', {
+            idUsuario: idUsuario
+        });
+    }
+
+    usuarioExclusao(idUsuario) {
+        const uri = `http://alexeiaj.duckdns.org:8800/usuarios/${idUsuario}`;
+        
+        const requestInfo = {
+            method: 'DELETE'
+        }
+
+        fetch(uri, requestInfo)
+            .then(response => {
+                if(response.ok){
+                    this.props.navigation.replace('Usuarios');
+                    return;
+                } 
+                throw new Error("Não foi possível deletar o usuario.");
+            })
+            .catch(e => this.setState({mensagem: e.message}));
+    }
+    
     render() {
         return (
             <ScrollView>
@@ -53,10 +73,18 @@ export default class Usuarios extends Component {
                     data={this.state.usuarios} 
                     keyExtractor={item => String(item.id)} 
                     renderItem={ ({item}) => 
-                        <Usuario usuario={item} perfilUsuarioCallback={this.perfilUsuario.bind(this)} isConsulting={!!this.props.navigation.getParam('idUsuario')}/>
+                        <TouchableOpacity style={styles.container2} onPress={() => this.usuarioConsulta(item.id)}>
+                            <Text style={styles.texto}>{item.login}</Text>
+                            <TouchableOpacity onPress={() => this.usuarioAlteracao(item.id)}>
+                                <Text>{'E'}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.usuarioExclusao(item.id)}>
+                                <Text>{'X'}</Text>
+                            </TouchableOpacity>
+                        </TouchableOpacity>
                     }
                 />
-                <Button title={`Cadastrar usuario`} onPress={this.cadastrarUsuario.bind(this)}/>
+                <Button title={`Incluir usuario`} onPress={this.usuarioInclusao.bind(this)}/>
             </ScrollView>
         );
     }
@@ -66,5 +94,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'lightgray',
-    }
+    },
+    container2: {
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+    },
+    titulo: {
+        fontSize: 15,
+        margin: 5,
+        color: 'black',
+    },
+    texto: {
+        fontSize: 15,
+        margin: 5,
+    },
 });
