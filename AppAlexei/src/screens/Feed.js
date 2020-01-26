@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import Post from '../components/Post';
+import { REACT_APP_URL } from 'react-native-dotenv';
 
 export default class Feed extends Component {
 
@@ -16,7 +17,7 @@ export default class Feed extends Component {
         this.state = {
             posts: [],
             usuario: '',
-            url: 'http://alexeiaj.duckdns.org:8800'
+            url: `${REACT_APP_URL}`
         }
     }
 

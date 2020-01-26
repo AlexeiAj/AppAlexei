@@ -7,7 +7,7 @@ import {
     Button,
     Text,
 } from 'react-native';
-
+import { REACT_APP_URL } from 'react-native-dotenv';
 
 const width = Dimensions.get('screen').width;
 
@@ -29,7 +29,7 @@ export default class UsuarioAlteracao extends Component {
 
     load() {
         let idUsuario = this.props.navigation.getParam('idUsuario');
-        let url = `http://alexeiaj.duckdns.org:8800/usuarios/${idUsuario}`;
+        let url = `${REACT_APP_URL}/usuarios/${idUsuario}`;
 
         fetch(url)
         .then(response => response.json())
@@ -39,7 +39,7 @@ export default class UsuarioAlteracao extends Component {
     }
 
     salvar() {
-        const uri = `http://alexeiaj.duckdns.org:8800/usuarios/${this.state.usuario.id}`;
+        const uri = `${REACT_APP_URL}/usuarios/${this.state.usuario.id}`;
         
         const requestInfo = {
             method: 'PUT',

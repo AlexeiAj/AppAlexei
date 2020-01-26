@@ -7,7 +7,7 @@ import {
     Button,
     Text,
 } from 'react-native';
-
+import { REACT_APP_URL } from 'react-native-dotenv';
 
 const width = Dimensions.get('screen').width;
 
@@ -24,7 +24,7 @@ export default class UsuarioInclusao extends Component {
     }
 
     salvar() {
-        const uri = "http://alexeiaj.duckdns.org:8800/usuarios";
+        const uri = `${REACT_APP_URL}/usuarios`;
         
         const requestInfo = {
             method: 'POST',

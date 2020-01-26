@@ -4,6 +4,7 @@ import {
     Text,
     View,
 } from 'react-native';
+import { REACT_APP_URL } from 'react-native-dotenv';
 
 export default class UsuarioConsulta extends Component {
 
@@ -20,7 +21,7 @@ export default class UsuarioConsulta extends Component {
 
     load() {
         let idUsuario = this.props.navigation.getParam('idUsuario');
-        let url = `http://alexeiaj.duckdns.org:8800/usuarios/${idUsuario}`;
+        let url = `${REACT_APP_URL}/usuarios/${idUsuario}`;
 
         fetch(url)
         .then(response => response.json())

@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     Text,
 } from 'react-native';
+import { REACT_APP_URL } from 'react-native-dotenv';
 
 export default class Usuarios extends Component {
 
@@ -22,7 +23,7 @@ export default class Usuarios extends Component {
     }
 
     load() {
-        let url = 'http://alexeiaj.duckdns.org:8800/usuarios';
+        let url = `${REACT_APP_URL}/usuarios`;
 
         fetch(url)
         .then(response => response.json())
@@ -48,7 +49,7 @@ export default class Usuarios extends Component {
     }
 
     usuarioExclusao(idUsuario) {
-        const uri = `http://alexeiaj.duckdns.org:8800/usuarios/${idUsuario}`;
+        const uri = `${REACT_APP_URL}/usuarios/${idUsuario}`;
         
         const requestInfo = {
             method: 'DELETE'
@@ -56,6 +57,7 @@ export default class Usuarios extends Component {
 
         fetch(uri, requestInfo)
             .then(response => {
+                // console.warn( 
                 if(response.ok){
                     this.props.navigation.replace('Usuarios');
                     return;

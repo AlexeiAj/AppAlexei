@@ -8,7 +8,7 @@ import {
     Button,
     Text,
 } from 'react-native';
-
+import { REACT_APP_URL } from 'react-native-dotenv';
 
 const width = Dimensions.get('screen').width;
 
@@ -25,7 +25,7 @@ export default class Login extends Component {
     }
 
     logar() {
-        const uri = "http://alexeiaj.duckdns.org:8800/auth";
+        const uri = `${REACT_APP_URL}/auth`;
         
         const requestInfo = {
             method: 'POST',
@@ -37,9 +37,10 @@ export default class Login extends Component {
                 'Content-type': 'application/json'
             })
         }
-
+        
+        
         fetch(uri, requestInfo)
-            .then(response => {
+        .then(response => {
                 if(response.ok) return response.text();
                 throw new Error("Não foi possível efetuar login.");
             })
