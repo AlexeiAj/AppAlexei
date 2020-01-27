@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
+import { REACT_APP_URL } from 'react-native-dotenv';
+import { Input, Text, Card, Button } from 'react-native-elements';
 import {
     StyleSheet,
-    View,
     Dimensions,
-    TextInput,
-    Button,
-    Text,
 } from 'react-native';
-import { REACT_APP_URL } from 'react-native-dotenv';
 
 const width = Dimensions.get('screen').width;
 
@@ -26,6 +23,11 @@ export default class Login extends Component {
 
     logar() {
         const uri = `${REACT_APP_URL}/auth`;
+
+        if(this.state.usuario === '' || this.state.senha === ''){
+            this.setState({mensagem: "Por favor preencha login e senha!"});
+            return;
+        }
         
         const requestInfo = {
             method: 'POST',
@@ -37,7 +39,6 @@ export default class Login extends Component {
                 'Content-type': 'application/json'
             })
         }
-        
         
         fetch(uri, requestInfo)
         .then(response => {
@@ -63,37 +64,23 @@ export default class Login extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
-                <View style={styles.form}>
-                    <TextInput style={styles.input} placeholder="Usuário.." autoCapitalize="none" onChangeText={texto => this.setState({usuario: texto})}/>
-                    <TextInput style={styles.input} placeholder="Senha.." autoCapitalize="none" secureTextEntry={true} onChangeText={texto => this.setState({senha: texto})}/>
-                    <Button title="Login" onPress={this.logar.bind(this)}/>
-                    <Button title="Cadastrar" onPress={this.cadastrar.bind(this)}/>
-                </View>
-
+            <Card image={require("../images/header.jpg")}>
+                <Input placeholder="Usuário" autoCapitalize="none" onChangeText={texto => this.setState({usuario: texto})}/>
+                <Input placeholder="Senha" autoCapitalize="none" secureTextEntry={true} onChangeText={texto => this.setState({senha: texto})}/>
+                <Button type="clear" title="Login" buttonStyle={styles.botao_login} onPress={this.logar.bind(this)}/>
+                <Button type="clear" title="Cadastrar" onPress={this.cadastrar.bind(this)}/>
                 <Text style={styles.mensagem}>{this.state.mensagem}</Text>
-            </View>
+            </Card>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    form: {
-        width: width * 0.8,
-    },
-    input: {
-        height: 40,
-        borderBottomWidth: 1,
-        borderBottomColor: '#ddd',
-    },
     mensagem: {
         color: 'red',
-        marginTop: 15,
-        fontSize: 10,
     },
+    botao_login: {
+        marginTop: 15,
+        marginBottom: 5
+    }
 });
