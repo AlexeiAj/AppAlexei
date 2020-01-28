@@ -1,2 +1,2 @@
-# AppAlexei
+# AppReactNative
  React Native App
