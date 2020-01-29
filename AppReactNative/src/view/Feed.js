@@ -7,7 +7,7 @@ import {
     Button,
 } from 'react-native';
 
-import Post from '../components/Post';
+import Post from '../component/Post';
 import { REACT_APP_URL } from 'react-native-dotenv';
 
 export default class Feed extends Component {

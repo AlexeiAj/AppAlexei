@@ -6,7 +6,7 @@ import {
     StyleSheet,
 } from 'react-native';
 
-export default class AuthLoadingScreen extends Component {
+export default class AuthLoadingScreen extends Component { 
     
     constructor(props) {
         super(props);
@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: '#6f00c9',
+        backgroundColor: '#ffffff',
     }
 });

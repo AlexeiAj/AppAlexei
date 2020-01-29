@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { REACT_APP_URL } from 'react-native-dotenv';
 import { Input, Text, Card, Button } from 'react-native-elements';
-import {
-    StyleSheet,
-    Dimensions,
-} from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 const width = Dimensions.get('screen').width;
 
@@ -13,26 +10,21 @@ export default class Login extends Component {
 
     constructor() {
         super();
-
-        this.state = {
-            usuario: '',
-            senha: '',
-            mensagem: ''
-        }
+        this.state = { login: '', senha: '', errMsg: '' }
     }
 
     logar() {
         const uri = `${REACT_APP_URL}/auth`;
 
-        if(this.state.usuario === '' || this.state.senha === ''){
-            this.setState({mensagem: "Por favor preencha login e senha!"});
+        if(this.state.login === '' || this.state.senha === ''){
+            this.setState({errMsg: "Por favor preencha login e senha!"});
             return;
         }
         
         const requestInfo = {
             method: 'POST',
             body: JSON.stringify({
-                login: this.state.usuario,
+                login: this.state.login,
                 senha: this.state.senha,
             }),
             headers: new Headers({
@@ -41,7 +33,7 @@ export default class Login extends Component {
         }
         
         fetch(uri, requestInfo)
-        .then(response => {
+            .then(response => {
                 if(response.ok) return response.text();
                 throw new Error("Não foi possível efetuar login.");
             })
@@ -55,28 +47,28 @@ export default class Login extends Component {
 
                 this.props.navigation.push('Feed');
             })
-            .catch(e => this.setState({mensagem: e.message}));
+            .catch(e => this.setState({errMsg: e.message}));
     }
 
     cadastrar() {
-        this.props.navigation.push('Usuarios');
+        this.props.navigation.push('ListaUsuarios');
     }
 
     render() {
         return (
-            <Card image={require("../images/header.jpg")}>
-                <Input placeholder="Usuário" autoCapitalize="none" onChangeText={texto => this.setState({usuario: texto})}/>
+            <Card image={require("../images/header.png")}>
+                <Input placeholder="Usuário" autoCapitalize="none" onChangeText={texto => this.setState({login: texto})}/>
                 <Input placeholder="Senha" autoCapitalize="none" secureTextEntry={true} onChangeText={texto => this.setState({senha: texto})}/>
                 <Button type="clear" title="Login" buttonStyle={styles.botao_login} onPress={this.logar.bind(this)}/>
                 <Button type="clear" title="Cadastrar" onPress={this.cadastrar.bind(this)}/>
-                <Text style={styles.mensagem}>{this.state.mensagem}</Text>
+                <Text style={styles.errMsg}>{this.state.errMsg}</Text>
             </Card>
         );
     }
 }
 
 const styles = StyleSheet.create({
-    mensagem: {
+    errMsg: {
         color: 'red',
     },
     botao_login: {
