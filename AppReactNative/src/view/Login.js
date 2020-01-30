@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { REACT_APP_URL } from 'react-native-dotenv';
 import { Input, Text, Card, Button } from 'react-native-elements';
-import { StyleSheet, Dimensions } from 'react-native';
-
-const width = Dimensions.get('screen').width;
+import { StyleSheet } from 'react-native';
 
 export default class Login extends Component {
 
@@ -43,9 +41,9 @@ export default class Login extends Component {
             })
             .then(token => {
                 AsyncStorage.setItem('token', token);
-                AsyncStorage.setItem('usuario', this.state.usuario);
+                AsyncStorage.setItem('usuario', this.state.login);
 
-                this.props.navigation.push('Feed');
+                this.props.navigation.navigate('App');
             })
             .catch(e => this.setState({errMsg: e.message}));
     }

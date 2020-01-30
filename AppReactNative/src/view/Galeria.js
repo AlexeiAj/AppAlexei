@@ -1,39 +1,31 @@
 import React, {Component} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Input, Card, Text, Button, Overlay, Header } from 'react-native-elements';
+import { Card, Text, Button, Overlay, Header } from 'react-native-elements';
 import { StyleSheet, FlatList, ScrollView, View } from 'react-native';
-import Post from '../component/Post';
-import ListaFotos from '../component/ListaFotos';
 import { REACT_APP_URL } from 'react-native-dotenv';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DatePicker from 'react-native-datepicker';
+import Foto from '../component/Foto';
+import ImagePicker from 'react-native-image-picker';
 
-export default class Feed extends Component {
+export default class Galeria extends Component {
 
     constructor(props){
         super(props);
         this.state = { 
             posts: [],
             openAdicionar: false,
-            usuario: '',
             errMsg: '',
-            post_titulo: '',
-            post_data: '',
-            post_categoria: '',
-            texto: '',
-            imagem: '',
-            link: ''
         }
     }
 
     static navigationOptions = { header: null };
 
     componentDidMount() {
-        this.props.navigation.addListener("willFocus", () => this.recarregarPosts());
+        this.props.navigation.addListener("willFocus", () => this.recarregarGaleria());
     }
 
-    recarregarPosts() {
-        let url = `${REACT_APP_URL}/posts`;
+    recarregarGaleria() {
+        let url = `${REACT_APP_URL}/fotos`;
 
         AsyncStorage.getItem('token')
             .then(token => {
@@ -45,7 +37,7 @@ export default class Feed extends Component {
             })
             .then(requestInfo => fetch(url, requestInfo))
             .then(response => response.json())
-            .then(json => this.setState({ posts: [].concat(json) }));
+            .then(json => this.setState({ fotos: [].concat(json) }));
 
         AsyncStorage.getItem('usuario')
             .then(usuario => this.setState({usuario: usuario}));
@@ -61,48 +53,35 @@ export default class Feed extends Component {
     }
 
     adicionar() {
-        let url = `${REACT_APP_URL}/posts`;
+        let url = `${REACT_APP_URL}/fotos`;
 
-        let post_conteudo = JSON.stringify({
-            texto: this.state.texto,
-            imagem: this.state.imagem,
-            link: this.state.link
+        const formData = new FormData();
+        formData.append("photo", {
+            name: this.state.foto.fileName,
+            type: this.state.foto.type,
+            uri: this.state.foto.uri
         });
 
         AsyncStorage.getItem('token')
             .then(token => {
                 return {
                     method: 'POST',
-                    body: JSON.stringify({
-                        post_titulo: this.state.post_titulo,
-                        post_data: this.state.post_data,
-                        post_categoria: this.state.post_categoria,
-                        post_conteudo: post_conteudo
-                    }),
+                    body: formData,
                     headers: new Headers({
-                        'Content-type': 'application/json',
                         'Authorization': token
                     })
                 }
             })
             .then(requestInfo => fetch(url, requestInfo))
             .then(response => {
+                console.warn(response)
                 if(response.ok){
-                    this.setState({
-                        openAdicionar: false,
-                        usuario: '',
-                        errMsg: '',
-                        post_titulo: '',
-                        post_data: '',
-                        post_categoria: '',
-                        texto: '',
-                        imagem: '',
-                        link: '' 
-                    });
-                    this.recarregarPosts();
+                    this.openCloseModalAdicionar(false);
+                    this.setState({foto: null, errMsg: ''});
+                    this.recarregarGaleria();
                     return;
                 } 
-                throw new Error("Não foi possível adicionar o post.");
+                throw new Error("Não foi possível adicionar a foto.");
             })
             .catch(e => this.setState({errMsg: e.message}));
     }
@@ -115,8 +94,18 @@ export default class Feed extends Component {
         this.props.navigation.replace('Galeria');
     }
 
-    selecionarFotoGaleria(path){
-        this.setState({imagem: path});
+    selecionarFoto(){
+        const options = { title: 'Selecionar Foto'}
+        ImagePicker.showImagePicker(options, (response) => {
+
+            if (response.didCancel || response.error || response.customButton){
+                this.openCloseModalAdicionar(false);
+                return;
+            }
+
+            this.setState({ foto: response });
+            this.adicionar();
+        });
     }
 
     render() {
@@ -130,26 +119,19 @@ export default class Feed extends Component {
                 </Header>
                 <Card>
                     <FlatList 
-                        data={this.state.posts} 
+                        data={this.state.fotos} 
                         keyExtractor={item => String(item.id)} 
                         renderItem={ ({item}) => 
-                            <Post post={item} recarregarPostsCallback={() => this.recarregarPosts()}/>
+                            <Foto foto={item} recarregarGaleriaCallback={() => this.recarregarGaleria()}/>
                         }
                     />
                     <Button type="clear" title="Adicionar" onPress={this.openCloseModalAdicionar.bind(this, true)}/>
                     <Button type="clear" title={`Deslogar de ${this.state.usuario}`} onPress={this.removerToken.bind(this)}/>
                 </Card>
-                <Overlay isVisible={this.state.openAdicionar} onBackdropPress={this.openCloseModalAdicionar.bind(this, false)}>
+                <Overlay isVisible={this.state.openAdicionar} height={120} onBackdropPress={this.openCloseModalAdicionar.bind(this, false)}>
                     <View>
-                        <Input placeholder="Título" autoCapitalize="none" onChangeText={texto => this.setState({post_titulo: texto})}/>
-                        <Input placeholder="Link" autoCapitalize="none" onChangeText={texto => this.setState({link: texto})}/>
-                        <DatePicker date={this.state.post_data} format="YYYY-MM-DD" onDateChange={(date) => {this.setState({post_data: date})}}/>
-                        <Input placeholder="Categoria" autoCapitalize="none" onChangeText={texto => this.setState({post_categoria: texto})}/>
-                        <Input placeholder="Texto" autoCapitalize="none" onChangeText={texto => this.setState({texto: texto})}/>
-                        <Input disabled={true} value={this.state.imagem} autoCapitalize="none" onChangeText={texto => this.setState({imagem: texto})}/>
-                        <ListaFotos selecionarCallback={this.selecionarFotoGaleria.bind(this)}/>
+                        <Button title="Selecionar Foto" onPress={this.selecionarFoto.bind(this)}/>
                         <Text style={styles.errMsg}>{this.state.errMsg}</Text>
-                        <Button type="clear" title="Adicionar" onPress={this.adicionar.bind(this)}/>
                         <Button type="clear" title="Cancelar" onPress={this.openCloseModalAdicionar.bind(this, false)}/>
                     </View>
                 </Overlay>

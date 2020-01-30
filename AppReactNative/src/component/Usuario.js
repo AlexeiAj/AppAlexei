@@ -50,22 +50,22 @@ export default class Usuario extends Component {
     }
 
     excluir(idUsuario) {
-            const uri = `${REACT_APP_URL}/usuarios/${idUsuario}`;
-            
-            const requestInfo = {
-                method: 'DELETE'
-            }
+        const uri = `${REACT_APP_URL}/usuarios/${idUsuario}`;
         
-            fetch(uri, requestInfo)
-                .then(response => {
-                    if(response.ok){
-                        this.setState({ openConsultar: false, login: '', senha: '', errMsg: '' });
-                        this.props.recarregarUsuariosCallback();
-                        return;
-                    } 
-                    throw new Error("Não foi possível deletar o usuario.");
-                })
-                .catch(e => this.setState({mensagem: e.message}));
+        const requestInfo = {
+            method: 'DELETE'
+        }
+    
+        fetch(uri, requestInfo)
+            .then(response => {
+                if(response.ok){
+                    this.setState({ openConsultar: false, login: '', senha: '', errMsg: '' });
+                    this.props.recarregarUsuariosCallback();
+                    return;
+                } 
+                throw new Error("Não foi possível deletar o usuario.");
+            })
+            .catch(e => this.setState({mensagem: e.message}));
     }
 
     render() {
@@ -83,18 +83,22 @@ export default class Usuario extends Component {
                     onPress={this.openCloseModalConsultar.bind(this, true)}
                 />
                 <Overlay isVisible={this.state.openConsultar} height={220} onBackdropPress={this.openCloseModalConsultar.bind(this, false)}>
-                    <Text h2>{this.state.usuario.login}</Text>
-                    <Text h2>{this.state.usuario.senha}</Text>
-                    <Text style={styles.errMsg}>{this.state.errMsg}</Text>
-                    <Button type="clear" title="Excluir" onPress={this.excluir.bind(this, this.state.usuario.id)}/>
-                    <Button type="clear" title="Cancelar" onPress={this.openCloseModalConsultar.bind(this, false)}/>
+                    <View>
+                        <Text h2>{this.state.usuario.login}</Text>
+                        <Text h2>{this.state.usuario.senha}</Text>
+                        <Text style={styles.errMsg}>{this.state.errMsg}</Text>
+                        <Button type="clear" title="Excluir" onPress={this.excluir.bind(this, this.state.usuario.id)}/>
+                        <Button type="clear" title="Cancelar" onPress={this.openCloseModalConsultar.bind(this, false)}/>
+                    </View>
                 </Overlay>
                 <Overlay isVisible={this.state.openAlterar} height={220} onBackdropPress={this.openCloseModalAlterar.bind(this, false)}>
-                    <Input placeholder="Usuário" value={this.state.usuario.login} autoCapitalize="none" onChangeText={texto => this.setState({login: texto})}/>
-                    <Input placeholder="Senha" autoCapitalize="none" secureTextEntry={true} onChangeText={texto => this.setState({senha: texto})}/>
-                    <Text style={styles.errMsg}>{this.state.errMsg}</Text>
-                    <Button type="clear" title="Alterar" onPress={this.salvar.bind(this, this.state.usuario)}/>
-                    <Button type="clear" title="Cancelar" onPress={this.openCloseModalAlterar.bind(this, false)}/>
+                    <View>
+                        <Input placeholder="Usuário" defaultValue={this.state.usuario.login} autoCapitalize="none" onChangeText={texto => this.setState({login: texto})}/>
+                        <Input placeholder="Senha" autoCapitalize="none" secureTextEntry={true} onChangeText={texto => this.setState({senha: texto})}/>
+                        <Text style={styles.errMsg}>{this.state.errMsg}</Text>
+                        <Button type="clear" title="Alterar" onPress={this.salvar.bind(this, this.state.usuario)}/>
+                        <Button type="clear" title="Cancelar" onPress={this.openCloseModalAlterar.bind(this, false)}/>
+                    </View>
                 </Overlay>
             </View>
         );

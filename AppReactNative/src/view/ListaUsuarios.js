@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { Input, Card, Text, Button, ListItem, Overlay } from 'react-native-elements';
-import { StyleSheet, FlatList, ScrollView } from 'react-native';
+import { Input, Card, Text, Button, Overlay } from 'react-native-elements';
+import { StyleSheet, FlatList, ScrollView, View } from 'react-native';
 import { REACT_APP_URL } from 'react-native-dotenv';
 import Usuario from '../component/Usuario';
 
@@ -67,11 +67,13 @@ export default class ListaUsuarios extends Component {
                     <Button type="clear" title="Adicionar" onPress={this.openCloseModalAdicionar.bind(this, true)}/>
                 </Card>
                 <Overlay isVisible={this.state.openAdicionar} height={220} onBackdropPress={this.openCloseModalAdicionar.bind(this, false)}>
-                    <Input placeholder="Usuário" autoCapitalize="none" onChangeText={texto => this.setState({login: texto})}/>
-                    <Input placeholder="Senha" autoCapitalize="none" secureTextEntry={true} onChangeText={texto => this.setState({senha: texto})}/>
-                    <Text style={styles.errMsg}>{this.state.errMsg}</Text>
-                    <Button type="clear" title="Adicionar" onPress={this.adicionar.bind(this)}/>
-                    <Button type="clear" title="Cancelar" onPress={this.openCloseModalAdicionar.bind(this, false)}/>
+                    <View>
+                        <Input placeholder="Usuário" autoCapitalize="none" onChangeText={texto => this.setState({login: texto})}/>
+                        <Input placeholder="Senha" autoCapitalize="none" secureTextEntry={true} onChangeText={texto => this.setState({senha: texto})}/>
+                        <Text style={styles.errMsg}>{this.state.errMsg}</Text>
+                        <Button type="clear" title="Adicionar" onPress={this.adicionar.bind(this)}/>
+                        <Button type="clear" title="Cancelar" onPress={this.openCloseModalAdicionar.bind(this, false)}/>
+                    </View>
                 </Overlay>
             </ScrollView>
         );
